@@ -1,4 +1,5 @@
 import json
+import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for, session
 
 
@@ -47,13 +48,24 @@ def create_app(config={}):
         if 'email' in session:
             foundClub = [c for c in clubs if c["name"] == club][0]
             foundCompetition = [c for c in competitions if c["name"] == competition][0]
-            if foundClub and foundCompetition:
-                return render_template(
-                    "booking.html", club=foundClub, competition=foundCompetition
-                )
+            competitionDate = datetime.datetime.strptime(foundCompetition['date'],
+                                                         '%Y-%m-%d %H:%M:%S')
+
+            if competitionDate > datetime.datetime.now():
+                if (foundClub and foundCompetition):
+                    flash("Valid competition")
+                    return render_template(
+                        "booking.html",
+                        club=foundClub,
+                        competition=foundCompetition,
+                        clubs=clubs,
+                    )
             else:
-                flash("Something went wrong-please try again")
-                return render_template("welcome.html", club=club, competitions=competitions)
+                flash("This competition is closed.")
+
+                return render_template(
+                    "welcome.html", club=foundClub, competitions=competitions, clubs=clubs
+                )
         else:
             flash("Please log in")
             return render_template("index.html", clubs=clubs)
@@ -88,7 +100,7 @@ def create_app(config={}):
                 club["points"] = int(club["points"]) - placesRequired
                 flash("Great-booking complete!")
                 return render_template(
-                    "welcome.html", club=club, competitions=competitions, clubs=clubs
+                    "welcome.html", club=club, competitions=competitions, clubs=clubs,date=str(datetime.datetime.now())
                 )
             elif placesRequired > 12:
 
@@ -100,7 +112,6 @@ def create_app(config={}):
                     clubs=clubs,
                     competition=competition,
                 )
-
             else:
 
                 flash("Something went wrong-please try again")

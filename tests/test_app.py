@@ -137,12 +137,12 @@ def test_purchaseDate_not_valid(client, load_clubs_fixture, load_competitions_fi
     assert response.status_code == 200
     response = client.get(
         "/book/"
-        + load_competitions_fixture["competitions"][1]["name"]
+        + load_competitions_fixture["competitions"][0]["name"]
         + "/"
-        + load_clubs_fixture["clubs"][0]["name"]
+        + load_clubs_fixture["clubs"][1]["name"]
     )
     data = response.data.decode()
-    assert "you cannot book for a competition with a date earlier than today" in data
+    assert "This competition is closed." in data
 
 #BUG: Point updates are not reflected #6
 def test_updates_purchasePlaces(client, load_clubs_fixture, load_competitions_fixture):

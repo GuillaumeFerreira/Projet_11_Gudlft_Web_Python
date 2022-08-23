@@ -157,12 +157,12 @@ def test_updates_purchasePlaces(client, load_clubs_fixture, load_competitions_fi
         data={
             "competition": load_competitions_fixture["competitions"][1]["name"],
             "club": load_clubs_fixture["clubs"][1]["name"],
-            "places": 2,
+            "places": 3,
         },
     )
     data = response.data.decode()
 
-    assert load_clubs_fixture["clubs"][1]["name"]+" | Points available: 2" in data
+    assert "Points available: 1" in data
 
 #FEATURE: Implement Points Display Board #7
 def test_showClub_showSummary(client, load_clubs_fixture):

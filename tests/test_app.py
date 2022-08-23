@@ -110,3 +110,34 @@ def test_purchasePlacesCompetition(client, load_clubs_fixture, load_competitions
     data = response.data.decode()
 
     assert "Number of Places: 14" in data
+
+#BUG: Booking places in past competitions #5
+def test_purchaseDate_valid(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+    response = client.get(
+        "/book/"
+        + load_competitions_fixture["competitions"][1]["name"]
+        + "/"
+        + load_clubs_fixture["clubs"][1]["name"]
+    )
+    data = response.data.decode()
+    assert "Valid competition" in data
+
+def test_purchaseDate_not_valid(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+    response = client.get(
+        "/book/"
+        + load_competitions_fixture["competitions"][1]["name"]
+        + "/"
+        + load_clubs_fixture["clubs"][0]["name"]
+    )
+    data = response.data.decode()
+    assert "you cannot book for a competition with a date earlier than today" in data

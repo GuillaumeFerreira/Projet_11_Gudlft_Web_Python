@@ -66,7 +66,6 @@ def create_app(config={}):
             ][0]
             club = [c for c in clubs if c["name"] == request.form["club"]][0]
             placesRequired = int(request.form["places"])
-
             if int(club["points"]) < placesRequired:
 
                 flash("You don t have enough points")
@@ -77,8 +76,12 @@ def create_app(config={}):
                     clubs=clubs,
                     competition=competition,
                 )
-            elif int(club["points"]) > placesRequired:
-
+            elif (
+                placesRequired <= 12
+                and placesRequired >= 0
+                and int(club["points"]) > placesRequired
+            ):
+                # Issue 6 : Point updates are not reflected
                 competition["numberOfPlaces"] = (
                     int(competition["numberOfPlaces"]) - placesRequired
                 )
@@ -87,6 +90,17 @@ def create_app(config={}):
                 return render_template(
                     "welcome.html", club=club, competitions=competitions, clubs=clubs
                 )
+            elif placesRequired > 12:
+
+                flash("You cannot buy more than twelve places, try again")
+                return render_template(
+                    "booking.html",
+                    club=club,
+                    competitions=competitions,
+                    clubs=clubs,
+                    competition=competition,
+                )
+
             else:
 
                 flash("Something went wrong-please try again")

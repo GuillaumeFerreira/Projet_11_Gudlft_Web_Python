@@ -37,6 +37,8 @@ def test_not_login(client):
 
     assert "Email not found" in data
 
+
+
 #BUG: Clubs should not be able to use more than their points allowed #02
 def test_purchasePlacesMore(client, load_clubs_fixture, load_competitions_fixture):
     response = client.post(

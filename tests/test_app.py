@@ -73,3 +73,40 @@ def test_purchasePlaces(client, load_clubs_fixture, load_competitions_fixture):
     data = response.data.decode()
 
     assert "Points available: 2" in data
+
+#BUG: Clubs shouldn't be able to book more than 12 places per competition #4
+def test_purchasePlacesTwelve(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": load_competitions_fixture["competitions"][0]["name"],
+            "club": load_clubs_fixture["clubs"][0]["name"],
+            "places": 13,
+        },
+    )
+    data = response.data.decode()
+
+    assert "You cannot buy more than twelve places" in data
+
+def test_purchasePlacesCompetition(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": load_competitions_fixture["competitions"][0]["name"],
+            "club": load_clubs_fixture["clubs"][0]["name"],
+            "places": 11,
+        },
+    )
+    data = response.data.decode()
+
+    assert "Number of Places: 14" in data

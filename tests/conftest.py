@@ -27,12 +27,12 @@ def load_competitions_fixture():
         "competitions": [
             {
                 "name": "Spring Festival",
-                "date": "2020-03-27 10:00:00",
+                "date": "2022-03-27 10:00:00",
                 "numberOfPlaces": "25",
             },
             {
                 "name": "Fall Classic",
-                "date": "2020-10-22 13:30:00",
+                "date": "2022-10-22 13:30:00",
                 "numberOfPlaces": "13",
             },
         ]

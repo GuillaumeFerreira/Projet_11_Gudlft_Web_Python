@@ -161,3 +161,13 @@ def test_updates_purchasePlaces(client, load_clubs_fixture, load_competitions_fi
     data = response.data.decode()
 
     assert load_clubs_fixture["clubs"][1]["name"]+" | Points available: 2" in data
+
+#FEATURE: Implement Points Display Board #7
+def test_showClub_showSummary(client, load_clubs_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"},
+    )
+    data = response.data.decode()
+    for club in load_clubs_fixture["clubs"]:
+        assert club["points"] in data and club["name"] in data and "Logout" in data

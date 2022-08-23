@@ -20,7 +20,19 @@
         <input type="email" name="email" id=""/>
         <button type="submit">Enter</button>
     </form>
+     <h3>Clubs:</h3>
+    <ul>
+        {% for comp in clubs %}
+        <li>
+            {{comp['name']}}<br />
 
+            Points balances: {{comp['points']}}
+
+        </li>
+        <hr />
+        {% endfor %}
+
+    </ul>
     {%endwith%}
 </body>
 </html>

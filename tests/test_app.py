@@ -14,7 +14,7 @@ def test_index(client):
     assert response.status_code == 200
 
 
-#ERROR 01: Entering a unknown email crashes the app
+#ERROR: Entering a unknown email crashes the app #01
 def test_login(client):
 
     response = client.post(
@@ -36,3 +36,40 @@ def test_not_login(client):
     data = response.data.decode()
 
     assert "Email not found" in data
+
+#BUG: Clubs should not be able to use more than their points allowed #02
+def test_purchasePlacesMore(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": load_competitions_fixture["competitions"][1]["name"],
+            "club": load_clubs_fixture["clubs"][1]["name"],
+            "places": 5,
+        },
+    )
+    data = response.data.decode()
+    assert "You don t have enough points" in data
+
+def test_purchasePlaces(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": load_competitions_fixture["competitions"][1]["name"],
+            "club": load_clubs_fixture["clubs"][1]["name"],
+            "places": 2,
+        },
+    )
+    data = response.data.decode()
+
+    assert "Points available: 2" in data

@@ -141,3 +141,23 @@ def test_purchaseDate_not_valid(client, load_clubs_fixture, load_competitions_fi
     )
     data = response.data.decode()
     assert "you cannot book for a competition with a date earlier than today" in data
+
+#BUG: Point updates are not reflected #6
+def test_updates_purchasePlaces(client, load_clubs_fixture, load_competitions_fixture):
+    response = client.post(
+        "/showSummary",
+        data={"email": "admin@irontemple.com"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": load_competitions_fixture["competitions"][1]["name"],
+            "club": load_clubs_fixture["clubs"][1]["name"],
+            "places": 2,
+        },
+    )
+    data = response.data.decode()
+
+    assert load_clubs_fixture["clubs"][1]["name"]+" | Points available: 2" in data

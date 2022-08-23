@@ -16,8 +16,11 @@ def loadCompetitions():
 
 def create_app(config={}):
     app = Flask(__name__)
-    app.secret_key = "something_special"
     app.config.from_object(config)
+
+    app.config.update(config)
+    app.secret_key = "something_special"
+
     competitions = loadCompetitions()
     clubs = loadClubs()
 

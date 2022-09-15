@@ -31,11 +31,11 @@ def create_app(config={}):
 
     @app.route("/showSummary", methods=["POST"])
     def showSummary():
-        if request.method == 'POST':
-            session['email'] = request.form['email']
+        if request.method == "POST":
+            session["email"] = request.form["email"]
             # Issue 01 : ERROR entering a unknown email crashes the app
             try:
-                club = [club for club in clubs if club["email"] == session['email']][0]
+                club = [club for club in clubs if club["email"] == session["email"]][0]
                 return render_template(
                     "welcome.html", club=club, competitions=competitions, clubs=clubs
                 )
@@ -45,14 +45,15 @@ def create_app(config={}):
 
     @app.route("/book/<competition>/<club>")
     def book(competition, club):
-        if 'email' in session:
+        if "email" in session:
             foundClub = [c for c in clubs if c["name"] == club][0]
             foundCompetition = [c for c in competitions if c["name"] == competition][0]
-            competitionDate = datetime.datetime.strptime(foundCompetition['date'],
-                                                         '%Y-%m-%d %H:%M:%S')
+            competitionDate = datetime.datetime.strptime(
+                foundCompetition["date"], "%Y-%m-%d %H:%M:%S"
+            )
 
             if competitionDate > datetime.datetime.now():
-                if (foundClub and foundCompetition):
+                if foundClub and foundCompetition:
                     flash("Valid competition")
                     return render_template(
                         "booking.html",
@@ -64,7 +65,10 @@ def create_app(config={}):
                 flash("This competition is closed.")
 
                 return render_template(
-                    "welcome.html", club=foundClub, competitions=competitions, clubs=clubs
+                    "welcome.html",
+                    club=foundClub,
+                    competitions=competitions,
+                    clubs=clubs,
                 )
         else:
             flash("Please log in")
@@ -72,7 +76,7 @@ def create_app(config={}):
 
     @app.route("/purchasePlaces", methods=["POST"])
     def purchasePlaces():
-        if 'email' in session:
+        if "email" in session:
             competition = [
                 c for c in competitions if c["name"] == request.form["competition"]
             ][0]
@@ -84,7 +88,7 @@ def create_app(config={}):
                 and placesRequired >= 0
                 and int(club["points"]) > placesRequired
             ):
-                if int(club["points"]) < placesRequired*3:
+                if int(club["points"]) < placesRequired * 3:
                     flash("You don t have enough points")
                     return render_template(
                         "booking.html",
@@ -98,10 +102,14 @@ def create_app(config={}):
                     competition["numberOfPlaces"] = (
                         int(competition["numberOfPlaces"]) - placesRequired
                     )
-                    club["points"] = int(club["points"]) - (placesRequired*3)
+                    club["points"] = int(club["points"]) - (placesRequired * 3)
                     flash("Great-booking complete!")
                     return render_template(
-                        "welcome.html", club=club, competitions=competitions, clubs=clubs,date=str(datetime.datetime.now())
+                        "welcome.html",
+                        club=club,
+                        competitions=competitions,
+                        clubs=clubs,
+                        date=str(datetime.datetime.now()),
                     )
             elif placesRequired > 12:
 
@@ -126,11 +134,12 @@ def create_app(config={}):
         else:
             flash("Please log in")
             return render_template("index.html", clubs=clubs)
+
     # TODO: Add route for points display
 
     @app.route("/logout")
     def logout():
-        session.pop('email', None)
+        session.pop("email", None)
         return redirect(url_for("index"))
 
     return app

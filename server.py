@@ -78,30 +78,31 @@ def create_app(config={}):
             ][0]
             club = [c for c in clubs if c["name"] == request.form["club"]][0]
             placesRequired = int(request.form["places"])
-            if int(club["points"]) < placesRequired:
 
-                flash("You don t have enough points")
-                return render_template(
-                    "booking.html",
-                    club=club,
-                    competitions=competitions,
-                    clubs=clubs,
-                    competition=competition,
-                )
-            elif (
+            if (
                 placesRequired <= 12
                 and placesRequired >= 0
                 and int(club["points"]) > placesRequired
             ):
-                # Issue 6 : Point updates are not reflected
-                competition["numberOfPlaces"] = (
-                    int(competition["numberOfPlaces"]) - placesRequired
-                )
-                club["points"] = int(club["points"]) - placesRequired
-                flash("Great-booking complete!")
-                return render_template(
-                    "welcome.html", club=club, competitions=competitions, clubs=clubs,date=str(datetime.datetime.now())
-                )
+                if int(club["points"]) < placesRequired*3:
+                    flash("You don t have enough points")
+                    return render_template(
+                        "booking.html",
+                        club=club,
+                        competitions=competitions,
+                        clubs=clubs,
+                        competition=competition,
+                    )
+                else:
+                    # Issue 6 : Point updates are not reflected
+                    competition["numberOfPlaces"] = (
+                        int(competition["numberOfPlaces"]) - placesRequired
+                    )
+                    club["points"] = int(club["points"]) - (placesRequired*3)
+                    flash("Great-booking complete!")
+                    return render_template(
+                        "welcome.html", club=club, competitions=competitions, clubs=clubs,date=str(datetime.datetime.now())
+                    )
             elif placesRequired > 12:
 
                 flash("You cannot buy more than twelve places, try again")

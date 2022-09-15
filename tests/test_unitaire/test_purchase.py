@@ -10,7 +10,7 @@ def test_purchasePlacesMore(client, load_clubs_fixture, load_competitions_fixtur
         data={
             "competition": load_competitions_fixture["competitions"][1]["name"],
             "club": load_clubs_fixture["clubs"][1]["name"],
-            "places": 5,
+            "places": 3,
         },
     )
     data = response.data.decode()
@@ -27,13 +27,13 @@ def test_purchasePlaces(client, load_clubs_fixture, load_competitions_fixture):
         "/purchasePlaces",
         data={
             "competition": load_competitions_fixture["competitions"][1]["name"],
-            "club": load_clubs_fixture["clubs"][1]["name"],
+            "club": load_clubs_fixture["clubs"][2]["name"],
             "places": 2,
         },
     )
     data = response.data.decode()
 
-    assert "Points available: 2" in data
+    assert "Points available: 6" in data
 
 #BUG: Clubs shouldn't be able to book more than 12 places per competition #4
 def test_purchasePlacesTwelve(client, load_clubs_fixture, load_competitions_fixture):
@@ -65,12 +65,12 @@ def test_purchasePlacesCompetition(client, load_clubs_fixture, load_competitions
         data={
             "competition": load_competitions_fixture["competitions"][0]["name"],
             "club": load_clubs_fixture["clubs"][0]["name"],
-            "places": 11,
+            "places": 4,
         },
     )
     data = response.data.decode()
 
-    assert "Number of Places: 14" in data
+    assert "Number of Places: 21" in data
 
 #BUG: Booking places in past competitions #5
 def test_purchaseDate_valid(client, load_clubs_fixture, load_competitions_fixture):
@@ -116,7 +116,7 @@ def test_updates_purchasePlaces(client, load_clubs_fixture, load_competitions_fi
         data={
             "competition": load_competitions_fixture["competitions"][1]["name"],
             "club": load_clubs_fixture["clubs"][1]["name"],
-            "places": 3,
+            "places": 1,
         },
     )
     data = response.data.decode()
